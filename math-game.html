@@ -37,18 +37,32 @@
             margin-top: 20px;
             width: 200px;
         }
-        #result {
+        #result, #scoreCounter, #timer {
             margin-top: 20px;
-            font-size: 24px;
-            font-weight: bold;
+            font-size: 20px;
+        }
+        #result.correct {
+            color: green;
+        }
+        #result.wrong {
+            color: red;
+        }
+        #error {
+            color: red;
+            margin-top: 20px;
+            font-size: 16px;
+            display: none;
         }
     </style>
 </head>
 <body>
     <button id="startButton">Are you ready to start?</button>
     <div id="gameArea">
+        <div id="scoreCounter">Correct: 0</div>
+        <div id="timer">Time: 60s</div>
         <input type="text" id="answerInput" placeholder="Enter your answer" autocomplete="off">
         <div id="result"></div>
+        <div id="error"></div>
     </div>
 
     <script>
@@ -56,30 +70,64 @@
         const gameArea = document.getElementById('gameArea');
         const answerInput = document.getElementById('answerInput');
         const resultDiv = document.getElementById('result');
+        const scoreCounter = document.getElementById('scoreCounter');
+        const timerDiv = document.getElementById('timer');
+        const errorDiv = document.getElementById('error');
         let score = 0;
         let isGameRunning = false;
         let gameTimeout;
+        let timerInterval;
+        let timeLeft = 60;
+
+        // Function to show error message
+        function showError(message) {
+            errorDiv.textContent = message;
+            errorDiv.style.display = 'block';
+            setTimeout(() => {
+                errorDiv.textContent = '';
+                errorDiv.style.display = 'none';
+            }, 3000);
+        }
 
         // Function to generate a random 3-digit number
         function getRandomNumber() {
             return Math.floor(Math.random() * 900) + 100; // 100 to 999
         }
 
-        // Function to generate a math problem (addition or subtraction)
+        // Function to generate a math problem
         function generateProblem() {
             const num1 = getRandomNumber();
             const num2 = getRandomNumber();
             const isAddition = Math.random() > 0.5;
             const operator = isAddition ? '+' : '-';
             const answer = isAddition ? num1 + num2 : num1 - num2;
-            return { question: `${num1} ${operator} ${num2}`, answer };
+            const spokenOperator = isAddition ? 'adding' : 'subtracting';
+            return { question: `${num1} ${operator} ${num2}`, spokenQuestion: `${num1} ${spokenOperator} ${num2}`, answer };
         }
 
         // Function to speak the math problem
-        function speakProblem(question) {
-            const utterance = new SpeechSynthesisUtterance(question);
-            utterance.rate = 1.2; // Slightly faster for clarity
-            window.speechSynthesis.speak(utterance);
+        function speakProblem(spokenQuestion) {
+            try {
+                // Cancel any ongoing speech to prevent overlap
+                window.speechSynthesis.cancel();
+                const utterance = new SpeechSynthesisUtterance(spokenQuestion);
+                utterance.rate = 1.2;
+                utterance.onerror = (event) => {
+                    showError('Speech synthesis failed. Please check your browser settings.');
+                };
+                window.speechSynthesis.speak(utterance);
+            } catch (e) {
+                showError('Speech synthesis is not supported in this browser.');
+            }
+        }
+
+        // Function to update the timer
+        function updateTimer() {
+            timeLeft--;
+            timerDiv.textContent = `Time: ${timeLeft}s`;
+            if (timeLeft <= 0) {
+                clearInterval(timerInterval);
+            }
         }
 
         // Function to start the game
@@ -87,27 +135,52 @@
             if (isGameRunning) return;
             isGameRunning = true;
             score = 0;
+            timeLeft = 60;
             startButton.style.display = 'none';
             gameArea.style.display = 'block';
             answerInput.value = '';
             answerInput.focus();
             resultDiv.textContent = '';
+            scoreCounter.textContent = 'Correct: 0';
+            timerDiv.textContent = 'Time: 60s';
+            errorDiv.textContent = '';
+            errorDiv.style.display = 'none';
 
             let currentProblem = generateProblem();
-            speakProblem(currentProblem.question);
+            speakProblem(currentProblem.spokenQuestion);
 
-            // Handle answer submission
-            answerInput.addEventListener('keydown', function handler(event) {
+            // Start timer
+            timerInterval = setInterval(updateTimer, 1000);
+
+            // Define answer handler
+            function handleAnswer(event) {
                 if (event.key === 'Enter') {
                     const userAnswer = parseInt(answerInput.value);
-                    if (userAnswer === currentProblem.answer) {
-                        score++;
+                    if (!isNaN(userAnswer)) {
+                        if (userAnswer === currentProblem.answer) {
+                            score++;
+                            resultDiv.textContent = 'Correct!';
+                            resultDiv.className = 'correct';
+                            scoreCounter.textContent = `Correct: ${score}`;
+                        } else {
+                            resultDiv.textContent = 'Wrong!';
+                            resultDiv.className = 'wrong';
+                        }
+                        setTimeout(() => {
+                            resultDiv.textContent = '';
+                            resultDiv.className = '';
+                        }, 1000);
+                    } else {
+                        showError('Please enter a valid number.');
                     }
                     answerInput.value = '';
                     currentProblem = generateProblem();
-                    speakProblem(currentProblem.question);
+                    speakProblem(currentProblem.spokenQuestion);
                 }
-            });
+            }
+
+            // Add event listener
+            answerInput.addEventListener('keydown', handleAnswer);
 
             // End game after 60 seconds
             gameTimeout = setTimeout(() => {
@@ -115,13 +188,26 @@
                 gameArea.style.display = 'none';
                 startButton.style.display = 'block';
                 resultDiv.textContent = `Game Over! Your score: ${score}`;
-                answerInput.removeEventListener('keydown', handler); // Clean up
-                window.speechSynthesis.cancel(); // Stop any ongoing speech
+                resultDiv.className = '';
+                answerInput.removeEventListener('keydown', handleAnswer);
+                window.speechSynthesis.cancel();
+                clearInterval(timerInterval);
             }, 60000);
         }
 
-        // Start button click event
-        startButton.addEventListener('click', startGame);
+        // Start button click event with error handling
+        try {
+            startButton.addEventListener('click', startGame);
+        } catch (e) {
+            console.error('Failed to add start button listener:', e);
+            showError('Failed to initialize the game. Please refresh the page.');
+        }
+
+        // Log errors to console for debugging
+        window.onerror = function (message, source, lineno, colno, error) {
+            console.error(`Script Error: ${message} at ${source}:${lineno}:${colno}`);
+            showError('An error occurred. Please try again or check your browser console.');
+        };
     </script>
 </body>
 </html>
