@@ -15,7 +15,7 @@
             margin: 0;
             background-color: #f0f0f0;
         }
-        #startButton {
+        #startButton, #replayButton {
             padding: 15px 30px;
             font-size: 18px;
             cursor: pointer;
@@ -23,9 +23,13 @@
             color: white;
             border: none;
             border-radius: 5px;
+            margin: 10px;
         }
-        #startButton:hover {
+        #startButton:hover, #replayButton:hover {
             background-color: #45a049;
+        }
+        #replayButton {
+            display: none;
         }
         #gameArea {
             display: none;
@@ -57,6 +61,7 @@
 </head>
 <body>
     <button id="startButton">Are you ready to start?</button>
+    <button id="replayButton">Play Again</button>
     <div id="gameArea">
         <div id="scoreCounter">Correct: 0</div>
         <div id="timer">Time: 60s</div>
@@ -67,6 +72,7 @@
 
     <script>
         const startButton = document.getElementById('startButton');
+        const replayButton = document.getElementById('replayButton');
         const gameArea = document.getElementById('gameArea');
         const answerInput = document.getElementById('answerInput');
         const resultDiv = document.getElementById('result');
@@ -100,18 +106,24 @@
             const num2 = getRandomNumber();
             const isAddition = Math.random() > 0.5;
             const operator = isAddition ? '+' : '-';
-            const answer = isAddition ? num1 + num2 : num1 - num2;
-            const spokenOperator = isAddition ? 'adding' : 'subtracting';
-            return { question: `${num1} ${operator} ${num2}`, spokenQuestion: `${num1} ${spokenOperator} ${num2}`, answer };
+            // Ensure no negative answers for subtraction
+            const firstNum = isAddition ? num1 : Math.max(num1, num2);
+            const secondNum = isAddition ? num2 : Math.min(num1, num2);
+            const answer = isAddition ? firstNum + secondNum : firstNum - secondNum;
+            const spokenOperator = isAddition ? 'add' : 'minus';
+            return { 
+                question: `${firstNum} ${operator} ${secondNum}`, 
+                spokenQuestion: `${firstNum} ${spokenOperator} ${secondNum}`, 
+                answer 
+            };
         }
 
         // Function to speak the math problem
         function speakProblem(spokenQuestion) {
             try {
-                // Cancel any ongoing speech to prevent overlap
                 window.speechSynthesis.cancel();
                 const utterance = new SpeechSynthesisUtterance(spokenQuestion);
-                utterance.rate = 1.2;
+                utterance.rate = 0.9; // Slower speech rate
                 utterance.onerror = (event) => {
                     showError('Speech synthesis failed. Please check your browser settings.');
                 };
@@ -137,6 +149,7 @@
             score = 0;
             timeLeft = 60;
             startButton.style.display = 'none';
+            replayButton.style.display = 'none';
             gameArea.style.display = 'block';
             answerInput.value = '';
             answerInput.focus();
@@ -187,6 +200,7 @@
                 isGameRunning = false;
                 gameArea.style.display = 'none';
                 startButton.style.display = 'block';
+                replayButton.style.display = 'block';
                 resultDiv.textContent = `Game Over! Your score: ${score}`;
                 resultDiv.className = '';
                 answerInput.removeEventListener('keydown', handleAnswer);
@@ -195,11 +209,12 @@
             }, 60000);
         }
 
-        // Start button click event with error handling
+        // Start and replay button click events
         try {
             startButton.addEventListener('click', startGame);
+            replayButton.addEventListener('click', startGame);
         } catch (e) {
-            console.error('Failed to add start button listener:', e);
+            console.error('Failed to add button listeners:', e);
             showError('Failed to initialize the game. Please refresh the page.');
         }
 
