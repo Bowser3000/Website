@@ -3,13 +3,90 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Image Page</title>
+    <title>Image Gallery</title>
+    <style>
+        /* Ensure the page is responsive and fits iPhone screens */
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+            box-sizing: border-box;
+        }
+
+        /* Container for each image and caption */
+        .image-container {
+            margin-bottom: 20px; /* Space between images */
+            text-align: center; /* Center captions */
+        }
+
+        /* Make images responsive to fit screen width */
+        img {
+            max-width: 100%; /* Prevent images from exceeding container width */
+            height: auto; /* Maintain aspect ratio */
+            display: block; /* Remove inline spacing issues */
+            margin: 0 auto; /* Center images */
+        }
+
+        /* Style for captions */
+        .caption {
+            font-size: 16px;
+            color: #333;
+            margin-top: 10px;
+        }
+
+        /* Style for the back link */
+        .back-link {
+            display: block;
+            text-align: center;
+            margin-top: 20px;
+            font-size: 18px;
+        }
+    </style>
 </head>
 <body>
-    <!-- Display the local image -->
-    <img src="images/magic-plasma.jpg" alt="Description of the image" width="600">
+    <!-- Image 1 -->
+    <div class="image-container">
+        <img src="images/placeholder1.jpg" alt="Placeholder image 1">
+        <p class="caption">Dummy caption for image 1</p>
+    </div>
+
+    <!-- Image 2 -->
+    <div class="image-container">
+        <img src="images/placeholder2.jpg" alt="Placeholder image 2">
+        <p class="caption">Dummy caption for image 2</p>
+    </div>
+
+    <!-- Image 3 -->
+    <div class="image-container">
+        <img src="images/placeholder3.jpg" alt="Placeholder image 3">
+        <p class="caption">Dummy caption for image 3</p>
+    </div>
+
+    <!-- Image 4 -->
+    <div class="image-container">
+        <img src="images/placeholder4.jpg" alt="Placeholder image 4">
+        <p class="caption">Dummy caption for image 4</p>
+    </div>
+
+    <!-- Image 5 -->
+    <div class="image-container">
+        <img src="images/placeholder5.jpg" alt="Placeholder image 5">
+        <p class="caption">Dummy caption for image 5</p>
+    </div>
+
+    <!-- Image 6 -->
+    <div class="image-container">
+        <img src="images/placeholder6.jpg" alt="Placeholder image 6">
+        <p class="caption">Dummy caption for image 6</p>
+    </div>
+
+    <!-- Image 7 -->
+    <div class="image-container">
+        <img src="images/placeholder7.jpg" alt="Placeholder image 7">
+        <p class="caption">Dummy caption for image 7</p>
+    </div>
 
     <!-- Link back to homepage -->
-    <p><a href="index.html">Back to Home</a></p>
+    <p class="back-link"><a href="index.html">Back to Home</a></p>
 </body>
 </html>
