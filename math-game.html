@@ -15,7 +15,7 @@
             margin: 0;
             background-color: #f0f0f0;
         }
-        #startButton, #replayAudioButton {
+        #startButton, #replayAudioButton, #homeButton {
             padding: 15px 30px;
             font-size: 18px;
             cursor: pointer;
@@ -25,11 +25,18 @@
             border-radius: 5px;
             margin: 10px;
         }
-        #startButton:hover, #replayAudioButton:hover {
+        #startButton:hover, #replayAudioButton:hover, #homeButton:hover {
             background-color: #45a049;
         }
         #replayAudioButton {
             display: none;
+        }
+        #replayAudioButton:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+        #homeButton {
+            display: none; /* Hidden during game, shown when game ends */
         }
         #gameArea {
             display: none;
@@ -41,7 +48,7 @@
             margin-top: 20px;
             width: 200px;
         }
-        #result, #scoreCounter, #timer {
+        #result, #scoreCounter, #timer, #highScores {
             margin-top: 20px;
             font-size: 20px;
         }
@@ -57,6 +64,13 @@
             font-size: 16px;
             display: none;
         }
+        #highScores ul {
+            list-style: none;
+            padding: 0;
+        }
+        #highScores li {
+            margin: 5px 0;
+        }
     </style>
 </head>
 <body>
@@ -65,26 +79,54 @@
         <div id="scoreCounter">Correct: 0</div>
         <div id="timer">Time: 60s</div>
         <input type="text" id="answerInput" placeholder="Enter your answer" autocomplete="off">
-        <button id="replayAudioButton">Replay Audio</button>
+        <button id="replayAudioButton" disabled>Replay Audio</button>
         <div id="result"></div>
         <div id="error"></div>
+    </div>
+    <button id="homeButton">Back to Home</button>
+    <div id="highScores">
+        <h3>High Scores</h3>
+        <ul id="highScoreList"></ul>
     </div>
 
     <script>
         const startButton = document.getElementById('startButton');
         const replayAudioButton = document.getElementById('replayAudioButton');
+        const homeButton = document.getElementById('homeButton');
         const gameArea = document.getElementById('gameArea');
         const answerInput = document.getElementById('answerInput');
         const resultDiv = document.getElementById('result');
         const scoreCounter = document.getElementById('scoreCounter');
         const timerDiv = document.getElementById('timer');
         const errorDiv = document.getElementById('error');
+        const highScoreList = document.getElementById('highScoreList');
         let score = 0;
         let isGameRunning = false;
         let gameTimeout;
         let timerInterval;
         let timeLeft = 60;
         let currentProblem = null;
+
+        // Load high scores from localStorage
+        function loadHighScores() {
+            const highScores = JSON.parse(localStorage.getItem('highScores')) || [];
+            highScoreList.innerHTML = '';
+            highScores.forEach((score, index) => {
+                const li = document.createElement('li');
+                li.textContent = `#${index + 1}: ${score}`;
+                highScoreList.appendChild(li);
+            });
+        }
+
+        // Save high score to localStorage
+        function saveHighScore(score) {
+            const highScores = JSON.parse(localStorage.getItem('highScores')) || [];
+            highScores.push(score);
+            highScores.sort((a, b) => b - a); // Sort descending
+            highScores.splice(5); // Keep top 5 scores
+            localStorage.setItem('highScores', JSON.stringify(highScores));
+            loadHighScores();
+        }
 
         // Function to show error message
         function showError(message) {
@@ -107,7 +149,6 @@
             const num2 = getRandomNumber();
             const isAddition = Math.random() > 0.5;
             const operator = isAddition ? '+' : '-';
-            // Ensure no negative answers for subtraction
             const firstNum = isAddition ? num1 : Math.max(num1, num2);
             const secondNum = isAddition ? num2 : Math.min(num1, num2);
             const answer = isAddition ? firstNum + secondNum : firstNum - secondNum;
@@ -125,12 +166,18 @@
                 window.speechSynthesis.cancel();
                 const utterance = new SpeechSynthesisUtterance(spokenQuestion);
                 utterance.rate = 0.9; // Slower speech rate
+                replayAudioButton.disabled = true; // Disable button during speech
+                utterance.onend = () => {
+                    replayAudioButton.disabled = false; // Enable button after speech
+                };
                 utterance.onerror = (event) => {
                     showError('Speech synthesis failed. Please check your browser settings.');
+                    replayAudioButton.disabled = false; // Enable in case of error
                 };
                 window.speechSynthesis.speak(utterance);
             } catch (e) {
                 showError('Speech synthesis is not supported in this browser.');
+                replayAudioButton.disabled = false;
             }
         }
 
@@ -152,6 +199,7 @@
             startButton.style.display = 'none';
             gameArea.style.display = 'block';
             replayAudioButton.style.display = 'block';
+            homeButton.style.display = 'none';
             answerInput.value = '';
             answerInput.focus();
             resultDiv.textContent = '';
@@ -198,7 +246,7 @@
 
             // Replay audio button
             replayAudioButton.addEventListener('click', () => {
-                if (currentProblem && isGameRunning) {
+                if (currentProblem && isGameRunning && !replayAudioButton.disabled) {
                     speakProblem(currentProblem.spokenQuestion);
                 }
             });
@@ -209,8 +257,10 @@
                 gameArea.style.display = 'none';
                 startButton.style.display = 'block';
                 replayAudioButton.style.display = 'none';
+                homeButton.style.display = 'block';
                 resultDiv.textContent = `Game Over! Your score: ${score}`;
                 resultDiv.className = '';
+                saveHighScore(score);
                 answerInput.removeEventListener('keydown', handleAnswer);
                 window.speechSynthesis.cancel();
                 clearInterval(timerInterval);
@@ -220,8 +270,12 @@
         // Start button click event
         try {
             startButton.addEventListener('click', startGame);
+            homeButton.addEventListener('click', () => {
+                window.location.href = 'index.html';
+            });
+            loadHighScores(); // Load high scores on page load
         } catch (e) {
-            console.error('Failed to add start button listener:', e);
+            console.error('Failed to add button listeners:', e);
             showError('Failed to initialize the game. Please refresh the page.');
         }
 
