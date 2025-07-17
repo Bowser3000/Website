@@ -5,71 +5,26 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Math Game</title>
     <style>
+        /* Minimal styling for barebones look */
         body {
-            font-family: Arial, sans-serif;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-            margin: 0;
-            background-color: #f0f0f0;
-        }
-        #startButton, #replayAudioButton, #homeButton {
-            padding: 15px 30px;
-            font-size: 18px;
-            cursor: pointer;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            border-radius: 5px;
             margin: 10px;
-        }
-        #startButton:hover, #replayAudioButton:hover, #homeButton:hover {
-            background-color: #45a049;
-        }
-        #replayAudioButton {
-            display: none;
-        }
-        #replayAudioButton:disabled {
-            background-color: #cccccc;
-            cursor: not-allowed;
-        }
-        #homeButton {
-            display: none; /* Hidden during game, shown when game ends */
-        }
-        #gameArea {
-            display: none;
-            text-align: center;
-        }
-        #answerInput {
-            padding: 10px;
-            font-size: 16px;
-            margin-top: 20px;
-            width: 200px;
-        }
-        #result, #scoreCounter, #timer, #highScores {
-            margin-top: 20px;
-            font-size: 20px;
-        }
-        #result.correct {
-            color: green;
-        }
-        #result.wrong {
-            color: red;
-        }
-        #error {
-            color: red;
-            margin-top: 20px;
-            font-size: 16px;
-            display: none;
-        }
-        #highScores ul {
-            list-style: none;
             padding: 0;
         }
-        #highScores li {
-            margin: 5px 0;
+        #gameArea, #highScores {
+            margin-top: 10px;
+        }
+        #answerInput {
+            width: 100%;
+            max-width: 200px; /* Prevent overflow on small screens */
+        }
+        #replayAudioButton:disabled {
+            /* Minimal visual cue for disabled state */
+            opacity: 0.5;
+        }
+        /* Ensure no horizontal scrolling on iPhone */
+        img, input, button, div {
+            max-width: 100%;
+            box-sizing: border-box;
         }
     </style>
 </head>
@@ -80,10 +35,10 @@
         <div id="timer">Time: 60s</div>
         <input type="text" id="answerInput" placeholder="Enter your answer" autocomplete="off">
         <button id="replayAudioButton" disabled>Replay Audio</button>
+        <button id="homeButton">Back to Home</button>
         <div id="result"></div>
         <div id="error"></div>
     </div>
-    <button id="homeButton">Back to Home</button>
     <div id="highScores">
         <h3>High Scores</h3>
         <ul id="highScoreList"></ul>
@@ -138,6 +93,22 @@
             }, 3000);
         }
 
+        // Function to stop the game
+        function stopGame() {
+            if (!isGameRunning) return;
+            isGameRunning = false;
+            clearTimeout(gameTimeout);
+            clearInterval(timerInterval);
+            window.speechSynthesis.cancel();
+            gameArea.style.display = 'none';
+            startButton.style.display = 'block';
+            replayAudioButton.style.display = 'none';
+            homeButton.style.display = 'block';
+            resultDiv.textContent = `Game Stopped! Your score: ${score}`;
+            saveHighScore(score);
+            answerInput.removeEventListener('keydown', handleAnswer);
+        }
+
         // Function to generate a random 3-digit number
         function getRandomNumber() {
             return Math.floor(Math.random() * 900) + 100; // 100 to 999
@@ -186,7 +157,8 @@
             timeLeft--;
             timerDiv.textContent = `Time: ${timeLeft}s`;
             if (timeLeft <= 0) {
-                clearInterval(timerInterval);
+                stopGame();
+                resultDiv.textContent = `Game Over! Your score: ${score}`;
             }
         }
 
@@ -199,7 +171,7 @@
             startButton.style.display = 'none';
             gameArea.style.display = 'block';
             replayAudioButton.style.display = 'block';
-            homeButton.style.display = 'none';
+            homeButton.style.display = 'block';
             answerInput.value = '';
             answerInput.focus();
             resultDiv.textContent = '';
@@ -222,15 +194,12 @@
                         if (userAnswer === currentProblem.answer) {
                             score++;
                             resultDiv.textContent = 'Correct!';
-                            resultDiv.className = 'correct';
                             scoreCounter.textContent = `Correct: ${score}`;
                         } else {
                             resultDiv.textContent = 'Wrong!';
-                            resultDiv.className = 'wrong';
                         }
                         setTimeout(() => {
                             resultDiv.textContent = '';
-                            resultDiv.className = '';
                         }, 1000);
                         answerInput.value = '';
                         currentProblem = generateProblem();
@@ -253,17 +222,8 @@
 
             // End game after 60 seconds
             gameTimeout = setTimeout(() => {
-                isGameRunning = false;
-                gameArea.style.display = 'none';
-                startButton.style.display = 'block';
-                replayAudioButton.style.display = 'none';
-                homeButton.style.display = 'block';
+                stopGame();
                 resultDiv.textContent = `Game Over! Your score: ${score}`;
-                resultDiv.className = '';
-                saveHighScore(score);
-                answerInput.removeEventListener('keydown', handleAnswer);
-                window.speechSynthesis.cancel();
-                clearInterval(timerInterval);
             }, 60000);
         }
 
@@ -271,6 +231,7 @@
         try {
             startButton.addEventListener('click', startGame);
             homeButton.addEventListener('click', () => {
+                stopGame();
                 window.location.href = 'index.html';
             });
             loadHighScores(); // Load high scores on page load
