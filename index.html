@@ -1,18 +1,151 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Welcome</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Welcome | My Portfolio</title>
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial, Helvetica, sans-serif;
+}
+
+body{
+    background:linear-gradient(135deg,#0f172a,#1e3a8a);
+    color:white;
+    min-height:100vh;
+}
+
+header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:25px 10%;
+}
+
+.logo{
+    font-size:28px;
+    font-weight:bold;
+}
+
+nav ul{
+    list-style:none;
+    display:flex;
+    gap:30px;
+}
+
+nav a{
+    text-decoration:none;
+    color:white;
+    font-weight:bold;
+    transition:.3s;
+}
+
+nav a:hover{
+    color:#60a5fa;
+}
+
+.hero{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    gap:60px;
+    padding:80px 10%;
+    flex-wrap:wrap;
+}
+
+.hero-text{
+    max-width:550px;
+}
+
+.hero-text h1{
+    font-size:3.5rem;
+    margin-bottom:20px;
+}
+
+.hero-text p{
+    font-size:1.2rem;
+    line-height:1.7;
+    color:#d1d5db;
+    margin-bottom:30px;
+}
+
+.buttons a{
+    display:inline-block;
+    margin-right:15px;
+    margin-top:10px;
+    padding:14px 28px;
+    background:#3b82f6;
+    color:white;
+    text-decoration:none;
+    border-radius:8px;
+    transition:.3s;
+}
+
+.buttons a:hover{
+    background:#2563eb;
+    transform:translateY(-2px);
+}
+
+.hero img{
+    width:300px;
+    height:300px;
+    object-fit:cover;
+    border-radius:50%;
+    border:6px solid white;
+    box-shadow:0 15px 40px rgba(0,0,0,.4);
+}
+
+footer{
+    text-align:center;
+    padding:30px;
+    color:#cbd5e1;
+}
+</style>
+
 </head>
 <body>
-    <h1>Welcome</h1>
+
+<header>
+    <div class="logo">My Portfolio</div>
+
     <nav>
         <ul>
-            <li><a href="no1.html">More about me</a></li>
+            <li><a href="no1.html">About Me</a></li>
             <li><a href="no2.html">Projects</a></li>
             <li><a href="no3.html">Fun</a></li>
         </ul>
     </nav>
+</header>
+
+<section class="hero">
+
+    <div class="hero-text">
+        <h1>Hi, I'm [Your Name]</h1>
+
+        <p>
+            Welcome to my website! Here you'll find information about me,
+            projects I've worked on, and some fun extras.
+            Thanks for stopping by.
+        </p>
+
+        <div class="buttons">
+            <a href="no1.html">About Me</a>
+            <a href="no2.html">View Projects</a>
+        </div>
+
+    </div>
+
+    <img src="profile.jpg" alt="Profile picture">
+
+</section>
+
+<footer>
+    © 2026 [Your Name]
+</footer>
+
 </body>
 </html>
