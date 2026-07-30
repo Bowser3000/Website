@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Salary Calculator - Excel File</title>
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial, Helvetica, sans-serif;
+}
+
+body{
+    background:linear-gradient(135deg,#0f172a,#1e3a8a);
+    color:white;
+    line-height:1.6;
+}
+
+.container{
+    max-width:900px;
+    margin:50px auto;
+    padding:20px;
+    text-align:center;
+}
+
+.notice{
+    background:#facc15;
+    color:#111827;
+    padding:15px;
+    border-radius:8px;
+    font-weight:bold;
+    margin-bottom:30px;
+}
+
+h1{
+    font-size:3rem;
+    margin-bottom:20px;
+}
+
+.intro{
+    color:#d1d5db;
+    font-size:1.1rem;
+    margin-bottom:30px;
+}
+
+.image-box{
+    margin:30px 0;
+}
+
+.image-box img{
+    width:300px;
+    height:300px;
+    object-fit:cover;
+    border-radius:15px;
+    border:5px solid white;
+}
+
+.content{
+    background:rgba(255,255,255,0.08);
+    padding:25px;
+    border-radius:12px;
+    margin-bottom:30px;
+}
+
+.content h2{
+    color:#93c5fd;
+    margin-bottom:15px;
+}
+
+.content p{
+    color:#d1d5db;
+}
+
+.download{
+    display:inline-block;
+    margin-top:20px;
+    padding:14px 28px;
+    background:#22c55e;
+    color:white;
+    text-decoration:none;
+    border-radius:8px;
+    font-weight:bold;
+    transition:0.3s;
+}
+
+.download:hover{
+    background:#16a34a;
+    transform:translateY(-2px);
+}
+
+.back{
+    display:inline-block;
+    margin-top:25px;
+    padding:12px 24px;
+    background:#3b82f6;
+    color:white;
+    text-decoration:none;
+    border-radius:8px;
+}
+
+.back:hover{
+    background:#2563eb;
+}
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="notice">
+        🚧 This project page is currently being updated. More information coming soon!
+    </div>
+
+    <h1>Salary Calculator</h1>
+
+    <p class="intro">
+        Welcome to my Salary Calculator project. This tool was created using
+        Microsoft Excel and is designed to help calculate salary information
+        quickly and efficiently. More details about the features and development
+        process will be added here in the future.
+    </p>
+
+
+    <div class="image-box">
+        <img src="images/profile.jpg" alt="Salary Calculator Preview">
+    </div>
+
+
+    <div class="content">
+        <h2>About This Project</h2>
+
+        <p>
+            This Excel-based calculator allows users to enter information and
+            receive calculated results automatically. The spreadsheet includes
+            formulas, formatting, and organised sections to make it simple to use.
+        </p>
+
+        <br>
+
+        <p>
+            Future updates may include improved design, additional calculations,
+            and extra features to make the calculator more advanced.
+        </p>
+
+    </div>
+
+
+    <a class="download" href="files/Salary-Calculator.xlsx" download>
+        📥 Download Excel File
+    </a>
+
+    <br>
+
+    <a class="back" href="Projects.html">
+        ← Back to Projects
+    </a>
+
+</div>
+
+</body>
+</html>
