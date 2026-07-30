@@ -1,13 +1,138 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Crazy Fact</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Projects</title>
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial, Helvetica, sans-serif;
+}
+
+body{
+    background:linear-gradient(135deg,#0f172a,#1e3a8a);
+    color:white;
+    line-height:1.6;
+}
+
+.container{
+    max-width:1000px;
+    margin:50px auto;
+    padding:20px;
+}
+
+.notice{
+    background:#facc15;
+    color:#111827;
+    padding:15px;
+    border-radius:8px;
+    text-align:center;
+    font-weight:bold;
+    margin-bottom:30px;
+}
+
+h1{
+    font-size:3rem;
+    margin-bottom:20px;
+}
+
+.project{
+    background:rgba(255,255,255,0.08);
+    padding:25px;
+    border-radius:12px;
+    margin-bottom:25px;
+    transition:0.3s;
+}
+
+.project:hover{
+    transform:translateY(-5px);
+    background:rgba(255,255,255,0.12);
+}
+
+.project h2{
+    color:#93c5fd;
+    margin-bottom:10px;
+}
+
+.project p{
+    color:#d1d5db;
+    margin-bottom:15px;
+}
+
+.button{
+    display:inline-block;
+    padding:10px 20px;
+    background:#3b82f6;
+    color:white;
+    text-decoration:none;
+    border-radius:8px;
+    transition:0.3s;
+}
+
+.button:hover{
+    background:#2563eb;
+}
+
+.back{
+    display:inline-block;
+    margin-top:20px;
+    padding:12px 24px;
+    background:#3b82f6;
+    color:white;
+    text-decoration:none;
+    border-radius:8px;
+    transition:0.3s;
+}
+
+.back:hover{
+    background:#2563eb;
+}
+</style>
+
 </head>
 <body>
-    <h1>Fact</h1>
-    <p>At the meridian in Greenwich, the time that the Sun is at the highest point in the sky is not necessarily 12pm. Solar noon is only approximately equal to 12pm on average over the year.</p>
-    <a href="index.html">Back to Home</a>
+
+<div class="container">
+
+    <div class="notice">
+        🚧 This page is still under construction. More projects will be added soon!
+    </div>
+
+    <h1>My Projects</h1>
+
+    <div class="project">
+        <h2>Project 1</h2>
+        <p>
+            Brief description of your first project. Explain what it does,
+            what technologies you used, and what you learned.
+        </p>
+        <a href="#" class="button">View Project</a>
+    </div>
+
+    <div class="project">
+        <h2>Project 2</h2>
+        <p>
+            Placeholder for another project. Replace this with your own
+            description and links.
+        </p>
+        <a href="#" class="button">View Project</a>
+    </div>
+
+    <div class="project">
+        <h2>Project 3</h2>
+        <p>
+            Add as many project cards as you need by copying this section.
+        </p>
+        <a href="#" class="button">View Project</a>
+    </div>
+
+    <a class="back" href="index.html">← Back to Home</a>
+
+</div>
+
 </body>
 </html>
